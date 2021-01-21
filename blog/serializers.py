@@ -10,7 +10,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class BlogPostSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(required=False, many=True)
-
+    
     class Meta:
         model = BlogPost
         fields = '__all__'

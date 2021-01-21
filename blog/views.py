@@ -12,33 +12,41 @@ class BlogPostListView(generics.ListAPIView):
     queryset = BlogPost.objects.order_by('-date_created')
     serializer_class = BlogPostSerializer
     lookup_field = 'slug'
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
 
 
 class CommentListView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
     queryset = Comment.objects.all()
     lookup_fields = 'slug'
 
 
-class BlogPostDetailView(generics.RetrieveAPIView):
-    queryset = BlogPost.objects.order_by('-date_created')
+class BlogPostDetailView(generics.ListCreateAPIView):
+
     serializer_class = BlogPostSerializer
+    queryset = BlogPost.objects.all().filter(slug='blog-5')
     lookup_field = 'slug'
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        print('request:', request.data['content'])
+        serializer = CommentSerializer(data=request.data['content'])
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class BlogPostFeaturedView(generics.ListAPIView):
     queryset = BlogPost.objects.filter(featured=True)
     serializer_class = BlogPostSerializer
     lookup_field = 'slug'
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
 
 
 class BlogPostCategoryView(APIView):
     serializer_class = BlogPostSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         data = self.request.data
