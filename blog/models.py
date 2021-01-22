@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 class Categories(models.TextChoices):
@@ -71,9 +72,11 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    print('token:', Token)
+    user = models.ForeignKey(
+        User, related_name='comment', on_delete=models.CASCADE)
     post = models.ForeignKey(
-        BlogPost, on_delete=models.CASCADE, related_name='comment')
+        BlogPost, related_name='comment', on_delete=models.CASCADE, )
     time_stamp = models.DateTimeField(auto_now_add=True)
     content = models.TextField(blank=True)
 
@@ -83,7 +86,8 @@ class Comment(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        BlogPost, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username

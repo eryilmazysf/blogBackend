@@ -3,9 +3,23 @@ from rest_framework import permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework import generics
 from blog.models import BlogPost, Comment
-from blog.serializers import BlogPostSerializer, CommentSerializer
+from blog.serializers import BlogPostSerializer, CommentSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404, redirect, render
+from blog import serializers
+from django.contrib.auth.models import User
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class BlogPostListView(generics.ListAPIView):
@@ -15,23 +29,26 @@ class BlogPostListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class CommentListView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
-    queryset = Comment.objects.all()
-    lookup_fields = 'slug'
+# class CommentListView(generics.ListCreateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#     lookup_fields = 'slug'
+#     permission_classes = (AllowAny,)
+
+#     def perform_create(self, serializer):
+#         serializer.save()
 
 
 class BlogPostDetailView(generics.ListCreateAPIView):
 
+    queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    queryset = BlogPost.objects.all().filter(slug='blog-5')
     lookup_field = 'slug'
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        print('request:', request.data['content'])
-        serializer = CommentSerializer(data=request.data['content'])
+        #print('request:', request.data['content'])
+        serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -60,16 +77,18 @@ class BlogPostCategoryView(APIView):
 class BlogPostCreateApi(generics.CreateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    #permission_classes = (permissions.AllowAny,)
+    permission_classes = [IsAuthenticated]
 
 
 class BlogPostUpdateApi(generics.RetrieveUpdateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
     lookup_field = 'slug'
+    permission_classes = [IsAuthenticated]
 
 
 class BlogPostDeleteApi(generics.DestroyAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
     lookup_field = 'slug'
+    permission_classes = [IsAuthenticated]
