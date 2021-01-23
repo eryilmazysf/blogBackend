@@ -3,7 +3,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework import generics
 from blog.models import BlogPost, Comment
-from blog.serializers import BlogPostSerializer, CommentSerializer, UserSerializer
+from blog.serializers import BlogPostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404, redirect, render
 from blog import serializers
@@ -16,10 +16,10 @@ class UserList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
-    permission_classes = [IsAuthenticated]
+# class UserDetail(generics.RetrieveAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = serializers.UserSerializer
+#     permission_classes = [IsAuthenticated]
 
 
 class BlogPostListView(generics.ListAPIView):
@@ -41,10 +41,16 @@ class BlogPostListView(generics.ListAPIView):
 
 class BlogPostDetailView(generics.ListCreateAPIView):
 
-    queryset = BlogPost.objects.all()
+    #queryset = BlogPost.objects.filter(slug="blog-2")
     serializer_class = BlogPostSerializer
-    lookup_field = 'slug'
     permission_classes = [IsAuthenticated]
+    #lookup_field = 'slug'
+
+    def get_queryset(self):
+        queryset = BlogPost.objects.all()
+        slug = self.kwargs["slug"]
+        queryset = queryset.filter(slug=slug)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         #print('request:', request.data['content'])

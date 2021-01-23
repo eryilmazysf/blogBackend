@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 # User Serializer
 
@@ -33,3 +34,14 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+# class LoginSerializer(serializers.Serializer):
+#     username = serializers.CharField()
+#     password = serializers.CharField()
+
+#     def validate(self, data):
+#         user = authenticate(**data)
+#         if user and user.is_active:
+#             return user
+#         raise serializers.ValidationError("Incorrect Credentials")

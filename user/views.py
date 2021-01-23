@@ -25,7 +25,7 @@ class RegisterAPI(generics.GenericAPIView):
         })
 
 
-class LoginAPI(KnoxLoginView):
+class LoginView(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
@@ -33,7 +33,7 @@ class LoginAPI(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        return super(LoginAPI, self).post(request, format=None)
+        return super(LoginView, self).post(request, format=None)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -69,3 +69,12 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserApi(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializer
+    #queryset = User.objects.all()
+
+    def get_object(self):
+        return self.request.user

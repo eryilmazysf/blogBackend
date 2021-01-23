@@ -72,7 +72,6 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
-    print('token:', Token)
     user = models.ForeignKey(
         User, related_name='comment', on_delete=models.CASCADE)
     post = models.ForeignKey(
