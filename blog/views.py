@@ -53,10 +53,14 @@ class BlogPostDetailView(generics.ListCreateAPIView):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        #print('request:', request.data['content'])
+        #print('request:', request.__repr__())
+        queryset = BlogPost.objects.all()
+        slug = self.kwargs["slug"]
+        queryset = queryset.filter(slug=slug)
+        #print("yusuf:", queryset[0])
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(user=request.user, post=queryset[0])
         return Response(serializer.data)
 
 

@@ -10,6 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    post = serializers.StringRelatedField()
+
     class Meta:
         model = Comment
         fields = '__all__'
