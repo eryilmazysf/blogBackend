@@ -89,11 +89,11 @@ WSGI_APPLICATION = 'blog_lyfe.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blog_lyfe',
+        'NAME': 'my-blog-backend',
         'USER': 'postgres',
         'PASSWORD': config('PASSWORD'),
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
 
