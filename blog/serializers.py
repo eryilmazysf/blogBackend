@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BlogPost, Comment
+from .models import BlogPost, Comment, Like
 from django.contrib.auth.models import User
 
 
@@ -19,10 +19,24 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
     comment = CommentSerializer(
         many=True, required=False,)
 
     class Meta:
         model = BlogPost
-        fields = '__all__'
+        fields = ('title', 'comment', 'author',
+                  'comment_count', 'like_count', 'category')
         lookoup_field = 'slug'
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    post = serializers.StringRelatedField()
+
+    class Meta:
+        model = Like
+        fields = (
+            "user",
+            "post",
+        )

@@ -19,11 +19,13 @@ class BlogPost(models.Model):
     category = models.CharField(
         max_length=50, choices=Categories.choices, default=Categories.WORLD)
     thumbnail = models.ImageField(upload_to='photos/%Y/%m/%d/')
+    image = models.URLField(max_length=500, blank=True)
     #link_url = models.URLField(max_length=200)
     excerpt = models.CharField(max_length=150)
     month = models.CharField(max_length=3)
     day = models.CharField(max_length=2)
     content = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     featured = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=datetime.now, blank=True)
 
@@ -56,7 +58,7 @@ class BlogPost(models.Model):
 
     @property
     def comment_count(self):
-        return self.comment_set.all().count()
+        return self.comment.count()
 
     @property
     def view_count(self):
