@@ -12,8 +12,9 @@ from rest_framework.permissions import IsAuthenticated
 # Register API
 
 
-class RegisterAPI(generics.GenericAPIView):
+class RegisterAPI(generics.CreateAPIView):
     serializer_class = RegisterSerializer
+    queryset = User.objects.all()
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
